@@ -1,33 +1,34 @@
-name: SQL review Bytebase Action
+name: SQL review
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "migrations/*.sql"
+      - "migrations/*.up.sql"
 
 jobs:
-  check-release:
+  check-release-on-dev:
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
     container:
-      image: docker://bytebase/bytebase-action:1.11.1
+      image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Check release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BYTEBASE_URL: ${{ vars.BYTEBASE_URL }}
-          BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT }}
-          BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET }}
+          BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
+          BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
+          BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
           BYTEBASE_PROJECT: "projects/latitude-demo"
           BYTEBASE_TARGETS: "instances/latitude-dev/databases/latitude-demo-dev"
-          FILE_PATTERN: "migrations/*.sql"
+          FILE_PATTERN: "migrations/*.up.sql"
         run: |
           bytebase-action check \
+            --check-release=FAIL_ON_ERROR \
             --url=${{ env.BYTEBASE_URL }} \
             --project=${{ env.BYTEBASE_PROJECT }} \
             --targets=${{ env.BYTEBASE_TARGETS }} \
