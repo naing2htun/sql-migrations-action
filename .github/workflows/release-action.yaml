@@ -1,4 +1,4 @@
-name: Rollout using bytebase-action image
+name: Bytebase rollout SQL migrations
 
 on:
   push:
@@ -18,15 +18,22 @@ jobs:
       image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
     outputs:
       bytebase-plan: ${{ steps.set-output.outputs.plan }}
+      pr-title: ${{ steps.get-pr-title.outputs.pr-title }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Get PR title from commit
+        id: get-pr-title
+        run: |
+          PR_TITLE=$(git log -1 --pretty=format:"%s")
+          echo "pr-title=$PR_TITLE" >> $GITHUB_OUTPUT
+          echo "Using title: $PR_TITLE"
       - name: Generate rollout plan for nonprod
         env:
           BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
           BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
           BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
-          BYTEBASE_TARGETS: "instances/latitude-dev/databases/latitude-dev,instances/latitude-qa/databases/latitude-qa,instances/latitude-stg/databases/latitude-stg"
+          BYTEBASE_TARGETS: "instances/latitude-dev/databases/latitude-demo-dev,instances/latitude-qa/databases/latitude-demo-qa,instances/latitude-stg/databases/latitude-demo-stg"
           BYTEBASE_OUTPUT: ${{ runner.temp }}/bytebase-metadata.json
         run: |
           bytebase-action rollout \
@@ -34,6 +41,7 @@ jobs:
             --project=${{ env.BYTEBASE_PROJECT }} \
             --file-pattern=${{ env.FILE_PATTERN }} \
             --targets=${{ env.BYTEBASE_TARGETS }} \
+            --release-title="${{ steps.get-pr-title.outputs.pr-title }}" \
             --output=${{ env.BYTEBASE_OUTPUT }}
       - name: Set output
         id: set-output

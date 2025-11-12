@@ -1,4 +1,4 @@
-name: SQL review
+name: Bytebase review SQL migrations
 
 on:
   pull_request:
