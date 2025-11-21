@@ -1,0 +1,2 @@
+ALTER TABLE active_users
+ADD COLUMN last_login TIMESTAMPTZ DEFAULT NOW();
