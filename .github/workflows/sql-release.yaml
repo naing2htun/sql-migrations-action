@@ -14,7 +14,7 @@ jobs:
     container:
       image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
     steps:
-      - uses: naing2htun/actions/release-sql@main
+      - uses: naing2htun/actions/sql-release@main
         with:
           bytebase-url: ${{ vars.BYTEBASE_URL_NONPROD }}
           bytebase-service-account: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
