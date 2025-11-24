@@ -52,70 +52,70 @@ jobs:
         run: |
           PLAN=$(jq -r .plan ${{ runner.temp }}/bytebase-metadata.json)
           echo "plan=$PLAN" >> $GITHUB_OUTPUT
-  deploy-to-dev:
-    needs: create-rollout-nonprod
-    runs-on: ubuntu-latest
-    environment: dev
-    container:
-      image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Rollout to dev
-        env:
-          BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
-          BYTEBASE_TARGET_STAGE: environments/dev
-        run: |
-          bytebase-action rollout \
-            --url=${{ env.BYTEBASE_URL }} \
-            --project=${{ env.BYTEBASE_PROJECT }} \
-            --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
-            --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
-  deploy-to-qa:
-    needs:
-      - create-rollout-nonprod
-      - deploy-to-dev
-    runs-on: ubuntu-latest
-    environment: qa
-    container:
-      image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Rollout to qa
-        env:
-          BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
-          BYTEBASE_TARGET_STAGE: environments/qa
-        run: |
-          bytebase-action rollout \
-            --url=${{ env.BYTEBASE_URL }} \
-            --project=${{ env.BYTEBASE_PROJECT }} \
-            --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
-            --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
-  deploy-to-stg:
-    needs:
-      - create-rollout-nonprod
-      - deploy-to-qa
-    runs-on: ubuntu-latest
-    environment: stg
-    container:
-      image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Rollout to stg
-        env:
-          BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
-          BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
-          BYTEBASE_TARGET_STAGE: environments/stg
-        run: |
-          bytebase-action rollout \
-            --url=${{ env.BYTEBASE_URL }} \
-            --project=${{ env.BYTEBASE_PROJECT }} \
-            --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
-            --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
+  # deploy-to-dev:
+  #   needs: create-rollout-nonprod
+  #   runs-on: ubuntu-latest
+  #   environment: dev
+  #   container:
+  #     image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v5
+  #     - name: Rollout to dev
+  #       env:
+  #         BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
+  #         BYTEBASE_TARGET_STAGE: environments/dev
+  #       run: |
+  #         bytebase-action rollout \
+  #           --url=${{ env.BYTEBASE_URL }} \
+  #           --project=${{ env.BYTEBASE_PROJECT }} \
+  #           --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
+  #           --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
+  # deploy-to-qa:
+  #   needs:
+  #     - create-rollout-nonprod
+  #     - deploy-to-dev
+  #   runs-on: ubuntu-latest
+  #   environment: qa
+  #   container:
+  #     image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v5
+  #     - name: Rollout to qa
+  #       env:
+  #         BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
+  #         BYTEBASE_TARGET_STAGE: environments/qa
+  #       run: |
+  #         bytebase-action rollout \
+  #           --url=${{ env.BYTEBASE_URL }} \
+  #           --project=${{ env.BYTEBASE_PROJECT }} \
+  #           --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
+  #           --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
+  # deploy-to-stg:
+  #   needs:
+  #     - create-rollout-nonprod
+  #     - deploy-to-qa
+  #   runs-on: ubuntu-latest
+  #   environment: stg
+  #   container:
+  #     image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v5
+  #     - name: Rollout to stg
+  #       env:
+  #         BYTEBASE_URL: ${{ vars.BYTEBASE_URL_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_NONPROD }}
+  #         BYTEBASE_SERVICE_ACCOUNT_SECRET: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
+  #         BYTEBASE_TARGET_STAGE: environments/stg
+  #       run: |
+  #         bytebase-action rollout \
+  #           --url=${{ env.BYTEBASE_URL }} \
+  #           --project=${{ env.BYTEBASE_PROJECT }} \
+  #           --target-stage=${{ env.BYTEBASE_TARGET_STAGE }} \
+  #           --plan=${{ needs.create-rollout-nonprod.outputs.bytebase-plan }}
