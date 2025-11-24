@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "migrations/*.up.sql"
+      - ".github/workflows/sql-review.yaml" # to allow workflow updates
 
 jobs:
   check-release-on-dev:
