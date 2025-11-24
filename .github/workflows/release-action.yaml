@@ -11,6 +11,8 @@ jobs:
   rollout:
     name: Release SQL migrations to nonprod
     runs-on: ubuntu-latest
+    container:
+      image: bytebase/bytebase-action:${{ vars.BYTEBASE_ACTION_VERSION }}
     steps:
       - uses: naing2htun/actions/release-sql@main
         with:
