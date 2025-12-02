@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - "migrations/*.up.sql"
-      - ".github/workflows/sql-plan.yaml" # to allow workflow updates
+      - ".github/workflows/sql-plan.yml" # to allow workflow updates
 jobs:
   plan-nonprod:
     uses: naing2htun/actions/.github/workflows/sql-plan.yml@main
