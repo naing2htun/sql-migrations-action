@@ -6,8 +6,13 @@ on:
     paths:
       - "migrations/*.up.sql"
       - ".github/workflows/sql-plan.yml" # to allow workflow updates
+  
+  repository_dispatch:
+    types: [promote-to-production]
+
 jobs:
   plan-nonprod:
+    if: github.event_name == 'push'
     uses: naing2htun/actions/.github/workflows/sql-plan.yml@main
     with:
       bytebase-url: ${{ vars.BYTEBASE_URL_NONPROD }}
@@ -17,3 +22,15 @@ jobs:
       file-pattern: "migrations/*.up.sql"
     secrets:
       bytebase-service-account-secret: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
+
+  plan-prod:
+    if: github.event_name == 'repository_dispatch'
+    uses: naing2htun/actions/.github/workflows/sql-plan.yml@main
+    with:
+      bytebase-url: ${{ vars.BYTEBASE_URL_PROD }}
+      bytebase-service-account: ${{ vars.BYTEBASE_SERVICE_ACCOUNT_PROD }}
+      project: "projects/latitude-demo"
+      targets: "instances/latitude-1/databases/latitude-demo"
+      file-pattern: "migrations/*.up.sql"
+    secrets:
+      bytebase-service-account-secret: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_PROD }}
