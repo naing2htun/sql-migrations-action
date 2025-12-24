@@ -1,0 +1,12 @@
+CREATE TABLE sales (
+  id SERIAL PRIMARY KEY,
+  product_name VARCHAR(255) NOT NULL,
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  unit_price DECIMAL(10, 2) NOT NULL CHECK (unit_price > 0),
+  total_amount DECIMAL(10, 2) NOT NULL,
+  customer_name VARCHAR(255),
+  customer_email VARCHAR(255),
+  sale_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
