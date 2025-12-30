@@ -16,6 +16,7 @@ jobs:
       project: "projects/latitude-demo"
       targets: "instances/latitude-qa/databases/latitude-demo-qa,instances/latitude-stg/databases/latitude-demo-stg"
       file-pattern: "migrations/*.up.sql"
+      plan-type: "nonprod"
     secrets:
       bytebase-service-account-secret: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_NONPROD }}
 
@@ -27,5 +28,6 @@ jobs:
       project: "projects/latitude-demo"
       targets: "instances/latitude-1/databases/latitude-demo"
       file-pattern: "migrations/*.up.sql"
+      plan-type: "prod"
     secrets:
       bytebase-service-account-secret: ${{ secrets.BYTEBASE_SERVICE_ACCOUNT_SECRET_PROD }}
